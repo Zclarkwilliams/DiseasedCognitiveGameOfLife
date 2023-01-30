@@ -3,7 +3,7 @@ Game of Life with Diseased Cognition
 Spring 2023 Term Project
 CS 6795 Intro to Cognitive Science
 
-Team - Sloppapotomos
+Team - Sloppopotamus
 Member - Scott Pickthorn
 Member - Zachary Clark-Williams
 
