@@ -5,7 +5,7 @@ CS 6795 Intro to Cognitive Science
 
 Team - Sloppopotamus
 Member - Scott Pickthorn
-Member - Zachary Clark-Williams
+Member - Zackary Clark-Williams
 
 @citation
 Referenced basic Game of Life Code -
@@ -60,7 +60,7 @@ def update(frameNum, img, grid, N):
 
 # main() function
 def main():
-
+	
 	# Command line args are in sys.argv[1], sys.argv[2] ..
 	# sys.argv[0] is the script name itself and can be ignored
 	# parse arguments
@@ -70,7 +70,13 @@ def main():
 	parser.add_argument('--grid-size', dest='N', required=False)
 	parser.add_argument('--mov-file', dest='movfile', required=False)
 	parser.add_argument('--interval', dest='interval', required=False)
+	parser.add_argument('--frames', dest='frames', required=False)
 	args = parser.parse_args()
+	
+	# set iteration count
+	frames = 1000
+	if args.frames and int(args.frames) > 100:
+		frames = int(args.frames)
 	
 	# set grid size
 	N = 100
@@ -91,9 +97,10 @@ def main():
 	fig, ax = plt.subplots()
 	img = ax.imshow(grid, interpolation='nearest')
 	ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, ),
-								frames = 10,
+								frames=frames,
 								interval=updateInterval,
-								save_count=50)
+								save_count=50,
+								repeat=False)
 
 	# # of frames?
 	# set output file
