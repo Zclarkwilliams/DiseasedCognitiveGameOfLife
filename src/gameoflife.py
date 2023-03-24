@@ -24,7 +24,7 @@ import matplotlib.animation as animation
 def rndLife():
     return np.random.choice(LIFE_STATES, p=[0.2, 0.8])
 
-# Randomize the color state of each cell R, G, Y or B
+# Randomize the color state of each cell R, G, or B
 def rndColorState():
     return random.sample(COLOR_STATE, len(COLOR_STATE))
 
@@ -80,7 +80,7 @@ def main():
         frames = int(args.frames)
     
     # set grid size
-    N = 5
+    N = 1000
     if args.N and int(args.N) > 8:
         N = int(args.N)
         
@@ -91,12 +91,14 @@ def main():
 
     # declare grid
     grid = np.array([])
+    initGrid = np.random.random((N,N))
     # populate grid with random on/off - more off than on
     grid = generateWorld(N)
+    print(grid)
 
     # set up animation
     fig, ax = plt.subplots()
-    img = ax.imshow(grid, interpolation='nearest')
+    img = ax.imshow(initGrid, interpolation='nearest')
     ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, ),
                                 frames=frames,
                                 interval=updateInterval,

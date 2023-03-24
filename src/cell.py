@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 # setting up the values for the grid
 LIFE_STATES = [True, False]
-COLOR_STATE = [255,0,0,0] # color order as R,G,Y,B
+COLOR_STATE = [255,0,0] # color order as [R, G, B] values 0 - 255
 
 # Automata structure
 @dataclass
@@ -27,3 +27,6 @@ class cell:
     @state.setter
     def state (self, state:list) -> None:
         self._state = state
+
+    def __array__ (self):
+        return np.array(astuple(self))
