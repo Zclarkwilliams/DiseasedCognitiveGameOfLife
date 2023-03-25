@@ -17,6 +17,7 @@ Referenced basic Game of Life Code -
 from cell import *
 import argparse
 import numpy as np
+from scipy import ndimage
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
@@ -42,18 +43,18 @@ def update(frameNum, img, grid, N):
             # compute 8-neighbor sum
             # using toroidal boundary conditions - x and y wrap around
             # so that the simulation takes place on a toroidal surface.
-            total = int((grid[i, (j-1)%N] + grid[i, (j+1)%N] +
-                        grid[(i-1)%N, j] + grid[(i+1)%N, j] +
-                        grid[(i-1)%N, (j-1)%N] + grid[(i-1)%N, (j+1)%N] +
-                        grid[(i+1)%N, (j-1)%N] + grid[(i+1)%N, (j+1)%N])/255)
+            total = int((grid[i][(j-1)%N].life + grid[i][(j+1)%N].life +
+                         grid[(i-1)%N][j].life + grid[(i+1)%N][j].life +
+                         grid[(i-1)%N][(j-1)%N].life + grid[(i-1)%N][(j+1)%N].life +
+                         grid[(i+1)%N][(j-1)%N].life + grid[(i+1)%N][(j+1)%N].life)/255)
 
             # apply Conway's rules
-            if grid[i, j] == ON:
+            if grid[i][j] == 1:
                 if (total < 2) or (total > 3):
-                    newGrid[i, j] = OFF
+                    newGrid[i, j] = 0
             else:
                 if total == 3:
-                    newGrid[i, j] = ON
+                    newGrid[i, j] = 1
 
     # update data
     img.set_data(newGrid)
@@ -91,15 +92,13 @@ def main():
 
     # declare grid
     grid = np.array([])
-    initGrid = np.random.random((N,N))
     # populate grid with random on/off - more off than on
     grid = generateWorld(N)
-    print(grid)
 
     # set up animation
     fig, ax = plt.subplots()
-    img = ax.imshow(initGrid, interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, ),
+    img = ax.imshow(grid, interpolation='nearest')
+    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N,),
                                 frames=frames,
                                 interval=updateInterval,
                                 save_count=50,

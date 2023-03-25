@@ -1,13 +1,12 @@
-'''
-Game of Life with Diseased Cognition
-Spring 2023 Term Project
-CS 6795 Intro to Cognitive Science
-
-Team - Sloppapotomos
-Member - Scott Pickthorn
-Member - Zachary Clark-Williams
-
-'''
+###
+# Cognitively Expanding The Game of Life
+# Spring 2023 Term Project
+# CS 6795 Intro to Cognitive Science
+#
+# Team - Swole
+# Member - Scott Pickthorne
+# Member - Zackary Clark-Williams
+###
 
 numpy
 matplotlib
