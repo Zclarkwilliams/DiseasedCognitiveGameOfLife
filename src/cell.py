@@ -37,6 +37,6 @@ class cell:
     @state.setter
     def state (self, state:list) -> None:
         self._state = state
-
+        
 #    def __array__ (self):
 #        return np.array(astuple(self))

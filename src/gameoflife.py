@@ -17,9 +17,15 @@ Referenced basic Game of Life Code -
 from cell import *
 import argparse
 import numpy as np
-from scipy import ndimage
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+
+def getGrid(grid, N):
+    newGrid = np.zeros(shape=(N,N), dtype='i,i,i')
+    for i in range(len(grid)):
+        for j in range(i):
+            newGrid[i,j] = grid[i][j].state
+    return newGrid
 
 # Randomize who is alive and bias towards dead
 def rndLife():
@@ -27,7 +33,8 @@ def rndLife():
 
 # Randomize the color state of each cell R, G, or B
 def rndColorState():
-    return random.sample(COLOR_STATE, len(COLOR_STATE))
+    sample = random.sample(COLOR_STATE, len(COLOR_STATE))
+    return (sample[0], sample[1], sample[2])
 
 def generateWorld(N):
     return [[cell(rndLife(), rndColorState()) for i in range(N)] for k in range(N)]
@@ -94,12 +101,13 @@ def main():
     grid = np.array([])
     # populate grid with random on/off - more off than on
     grid = generateWorld(N)
+    imgGrid = getGrid(grid,N)
 
     # set up animation
     fig, ax = plt.subplots()
-    img = ax.imshow(grid, interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N,),
-                                frames=frames,
+    img = ax.imshow(imgGrid, interpolation='nearest')
+    ani = animation.FuncAnimation(fig, update, fargs=(imgGrid, grid, N,),
+                                frames=1,
                                 interval=updateInterval,
                                 save_count=50,
                                 repeat=False)
