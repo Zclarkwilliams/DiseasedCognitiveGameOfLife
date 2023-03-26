@@ -15,6 +15,7 @@ Referenced basic Game of Life Code -
 
 # Python code to implement Conway's Game Of Life
 from cell import *
+import time
 import argparse
 import numpy as np
 import matplotlib
@@ -48,33 +49,32 @@ def update(frameNum, img, imgGrid, N, grid):
     newGrid = np.zeros(shape=(N,N,3))
     for i in range(N):
         for j in range(N):
-
             # compute 8-neighbor sum
             # using toroidal boundary conditions - x and y wrap around
             # so that the simulation takes place on a toroidal surface.
             total = int((grid[i][(j-1)%N].life + grid[i][(j+1)%N].life +
                          grid[(i-1)%N][j].life + grid[(i+1)%N][j].life +
                          grid[(i-1)%N][(j-1)%N].life + grid[(i-1)%N][(j+1)%N].life +
-                         grid[(i+1)%N][(j-1)%N].life + grid[(i+1)%N][(j+1)%N].life)/255)
+                         grid[(i+1)%N][(j-1)%N].life + grid[(i+1)%N][(j+1)%N].life))
 
             # apply Conway's rules
             if grid[i][j] == 1:
                 if (total < 2) or (total > 3):
                     newGrid[i, j, 0:2] = 0
+                    grid[i][j].life    = 0
             else:
                 if total == 3:
                     for k in range(0,2):
-                        newGrid[i,j,k] = grid[i][j].state[k]
+                        newGrid[i,j,k]  = grid[i][j].state[k]
+                        grid[i][j].life = 1
 
     # update data
     img.set_data(newGrid)
     #img.set_data(np.clip(newGrid, 0, 1))
-    print(newGrid)
     imgGrid[:] = newGrid[:]
     return (img,)
 
 def main():
-    
     # Command line args are in sys.argv[1], sys.argv[2] ..
     # sys.argv[0] is the script name itself and can be ignored
     # parse arguments
@@ -88,7 +88,7 @@ def main():
     args = parser.parse_args()
     
     # set iteration count
-    frames = 100
+    frames = 10000
     if args.frames and int(args.frames) > 100:
         frames = int(args.frames)
     
@@ -116,7 +116,7 @@ def main():
     ani = animation.FuncAnimation(fig,
                                   update, 
                                   fargs=(img, imgGrid, N, grid,),
-                                  frames=1,
+                                  frames=frames,
                                   interval=updateInterval,
                                   blit = True,
                                   repeat=True)
