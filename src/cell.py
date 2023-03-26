@@ -39,3 +39,14 @@ class cell:
     @state.setter
     def state (self, state:list) -> None:
         self._state = state
+
+    # Randomize who is alive and bias towards dead
+    def rndLife():
+        return np.random.choice(LIFE_STATES, p=[0.2, 0.8])
+
+    # Randomize the color state of each cell R, G, or B
+    def rndColorState():
+        return random.sample(COLOR_STATE, len(COLOR_STATE))
+
+    def generateWorld(N):
+        return [[self(self.rndLife(), self.rndColorState()) for i in range(N)] for k in range(N)]
