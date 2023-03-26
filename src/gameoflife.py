@@ -58,15 +58,15 @@ def update(frameNum, img, imgGrid, N, grid):
                          grid[(i+1)%N][(j-1)%N].life + grid[(i+1)%N][(j+1)%N].life))
 
             # apply Conway's rules
-            if grid[i][j] == 1:
+            if grid[i][j] == ALIVE:
                 if (total < 2) or (total > 3):
-                    newGrid[i, j, :3] = 0
-                    grid[i][j].life   = 0
+                    newGrid[i, j, :3] = DEAD
+                    grid[i][j].life   = DEAD
             else:
                 if total == 3:
                     for k in range(0, 3):
                         newGrid[i,j,k]  = grid[i][j].state[k]
-                        grid[i][j].life = 1
+                        grid[i][j].life = ALIVE
 
     # update data
     img.set_data(newGrid)

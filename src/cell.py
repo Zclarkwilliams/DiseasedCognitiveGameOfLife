@@ -13,8 +13,10 @@ import numpy as np
 from dataclasses import dataclass, field
 
 # setting up the values for the grid
-LIFE_STATES = [1, 0]    # life or death states life = 1 and death = 0
-COLOR_STATE = [255,0,0] # color order as [R, G, B] values 0 - 255
+ALIVE = 1
+DEAD  = 0
+LIFE_STATES = [ALIVE, DEAD]     # life or death states life = 1 and death = 0
+COLOR_STATE = [255, 0, 0]       # color order as [R, G, B] values 0 - 255
 
 # Automata structure
 @dataclass
@@ -37,6 +39,3 @@ class cell:
     @state.setter
     def state (self, state:list) -> None:
         self._state = state
-        
-#    def __array__ (self):
-#        return np.array(astuple(self))
