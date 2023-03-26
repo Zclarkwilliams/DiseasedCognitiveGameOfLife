@@ -17,14 +17,16 @@ Referenced basic Game of Life Code -
 from cell import *
 import argparse
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 def getGrid(grid, N):
-    newGrid = np.zeros(shape=(N,N), dtype='i,i,i')
+    newGrid = np.zeros(shape=(N,N,3))
     for i in range(len(grid)):
         for j in range(i):
-            newGrid[i,j] = grid[i][j].state
+            for k in range(0,2):
+                newGrid[i,j,k] = grid[i][j].state[k]
     return newGrid
 
 # Randomize who is alive and bias towards dead
@@ -39,11 +41,11 @@ def rndColorState():
 def generateWorld(N):
     return [[cell(rndLife(), rndColorState()) for i in range(N)] for k in range(N)]
 
-def update(frameNum, img, grid, N):
+def update(frameNum, img, imgGrid, N, grid):
 
     # copy grid since we require 8 neighbors
     # for calculation and we go line by line
-    newGrid = grid.copy()
+    newGrid = np.zeros(shape=(N,N,3))
     for i in range(N):
         for j in range(N):
 
@@ -58,15 +60,17 @@ def update(frameNum, img, grid, N):
             # apply Conway's rules
             if grid[i][j] == 1:
                 if (total < 2) or (total > 3):
-                    newGrid[i, j] = 0
+                    newGrid[i, j, 0:2] = 0
             else:
                 if total == 3:
-                    newGrid[i, j] = 1
+                    for k in range(0,2):
+                        newGrid[i,j,k] = grid[i][j].state[k]
 
     # update data
-    img.set_data(newGrid)
+    #img.set_data(newGrid)
+    img.set_data(imgGrid[:, :, 0]/np.max(imgGrid[:, :, 0])) # Normalize the values
     grid[:] = newGrid[:]
-    return img
+    return (img,)
 
 def main():
     
@@ -83,7 +87,7 @@ def main():
     args = parser.parse_args()
     
     # set iteration count
-    frames = 1
+    frames = 100
     if args.frames and int(args.frames) > 100:
         frames = int(args.frames)
     
@@ -102,15 +106,19 @@ def main():
     # populate grid with random on/off - more off than on
     grid = generateWorld(N)
     imgGrid = getGrid(grid,N)
+    print(imgGrid.shape)
 
     # set up animation
+    matplotlib.use('Agg')
     fig, ax = plt.subplots()
     img = ax.imshow(imgGrid, interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(imgGrid, grid, N,),
-                                frames=1,
-                                interval=updateInterval,
-                                save_count=50,
-                                repeat=False)
+    ani = animation.FuncAnimation(fig,
+                                  update, 
+                                  fargs=(img, imgGrid, N, grid,),
+                                  frames=frames,
+                                  interval=updateInterval,
+                                  blit = True,
+                                  repeat=False)
 
     # # of frames?
     # set output file
