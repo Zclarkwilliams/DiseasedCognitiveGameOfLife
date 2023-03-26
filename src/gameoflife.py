@@ -60,11 +60,11 @@ def update(frameNum, img, imgGrid, N, grid):
             # apply Conway's rules
             if grid[i][j] == 1:
                 if (total < 2) or (total > 3):
-                    newGrid[i, j, 0:2] = 0
-                    grid[i][j].life    = 0
+                    newGrid[i, j, :3] = 0
+                    grid[i][j].life   = 0
             else:
                 if total == 3:
-                    for k in range(0,2):
+                    for k in range(0, 3):
                         newGrid[i,j,k]  = grid[i][j].state[k]
                         grid[i][j].life = 1
 
