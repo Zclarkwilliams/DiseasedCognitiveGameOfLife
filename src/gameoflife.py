@@ -36,17 +36,17 @@ def rndLife():
 
 # Randomize the color state of each cell R, G, or B
 def rndColorState():
-    sample = random.sample(COLOR_STATE, len(COLOR_STATE))
-    return (sample[0], sample[1], sample[2])
+    return random.sample(COLOR_STATE, len(COLOR_STATE))
 
 def generateWorld(N):
     return [[cell(rndLife(), rndColorState()) for i in range(N)] for k in range(N)]
 
 def update(frameNum, img, imgGrid, N, grid):
 
-    # copy grid since we require 8 neighbors
-    # for calculation and we go line by line
+    # Copy grid to generate the image to print vs. the data packed cell world
     newGrid = np.zeros(shape=(N,N,3))
+
+    # For calculation and we go line by line
     for i in range(N):
         for j in range(N):
             # compute 8-neighbor sum
@@ -65,8 +65,12 @@ def update(frameNum, img, imgGrid, N, grid):
             else:
                 if total == 3:
                     for k in range(0, 3):
-                        newGrid[i,j,k]  = grid[i][j].state[k]
-                        grid[i][j].life = ALIVE
+                        newGrid[i,j,k]      = grid[i][j].state[k]
+                        grid[i][j].life     = ALIVE
+#                        grid[i][j].state[k] = grid[i][(j-1)%N].life * grid[i][j].state[k] * colorBias[k] + grid[i][(j+1)%N].life +               \
+#                                              grid[(i-1)%N][j].life + grid[(i+1)%N][j].life +               \
+#                                              grid[(i-1)%N][(j-1)%N].life + grid[(i-1)%N][(j+1)%N].life +   \
+#                                              grid[(i+1)%N][(j-1)%N].life + grid[(i+1)%N][(j+1)%N].life
 
     # update data
     img.set_data(newGrid)
@@ -88,7 +92,7 @@ def main():
     args = parser.parse_args()
     
     # set iteration count
-    frames = 10000
+    frames = 1000
     if args.frames and int(args.frames) > 100:
         frames = int(args.frames)
     
@@ -98,7 +102,7 @@ def main():
         N = int(args.N)
         
     # set animation update interval
-    updateInterval = 50
+    updateInterval = 500
     if args.interval:
         updateInterval = int(args.interval)
 
@@ -116,8 +120,9 @@ def main():
     ani = animation.FuncAnimation(fig,
                                   update, 
                                   fargs=(img, imgGrid, N, grid,),
-                                  frames=frames,
+                                  #frames=frames,
                                   interval=updateInterval,
+                                  save_count=100,
                                   blit = True,
                                   repeat=True)
 
