@@ -67,9 +67,10 @@ def update(frameNum, img, imgGrid, N, grid):
                         newGrid[i,j,k] = grid[i][j].state[k]
 
     # update data
-    #img.set_data(newGrid)
-    img.set_data(imgGrid[:, :, 0]/np.max(imgGrid[:, :, 0])) # Normalize the values
-    grid[:] = newGrid[:]
+    img.set_data(newGrid)
+    #img.set_data(np.clip(newGrid, 0, 1))
+    print(newGrid)
+    imgGrid[:] = newGrid[:]
     return (img,)
 
 def main():
@@ -109,23 +110,23 @@ def main():
     print(imgGrid.shape)
 
     # set up animation
-    matplotlib.use('Agg')
+    matplotlib.use('TkAgg')
     fig, ax = plt.subplots()
     img = ax.imshow(imgGrid, interpolation='nearest')
     ani = animation.FuncAnimation(fig,
                                   update, 
                                   fargs=(img, imgGrid, N, grid,),
-                                  frames=frames,
+                                  frames=1,
                                   interval=updateInterval,
                                   blit = True,
-                                  repeat=False)
+                                  repeat=True)
 
     # # of frames?
     # set output file
     if args.movfile:
         ani.save(args.movfile, fps=30, extra_args=['-vcodec', 'libx264'])
 
-    plt.show()
+    plt.show(block=True)
 
 # call main
 if __name__ == '__main__':
