@@ -61,14 +61,15 @@ def update(frameNum, img, imgGrid, N, grid):
                     for k in range(0, 3):
                         newGrid[i,j,k]      = grid[i][j].state[k]
                         grid[i][j].life     = ALIVE
-                        grid[i][j].state[k] = (grid[i][(j-1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
-                                               grid[i][(j+1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
-                                               grid[(i-1)%N][j].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
-                                               grid[(i+1)%N][j].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
-                                               grid[(i-1)%N][(j-1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
-                                               grid[(i-1)%N][(j+1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
-                                               grid[(i+1)%N][(j-1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
-                                               grid[(i+1)%N][(j+1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k]) / 3
+                        if grid[i][j].state[k] != 255:
+                            grid[i][j].state[k] = (grid[i][(j-1)%N].life * (grid[i][(j-1)%N].state[k] * COLOR_BIAS[k]) + \
+                                                   grid[i][(j+1)%N].life * (grid[i][(j+1)%N].state[k] * COLOR_BIAS[k]) + \
+                                                   grid[(i-1)%N][j].life * (grid[(i-1)%N][j].state[k] * COLOR_BIAS[k]) + \
+                                                   grid[(i+1)%N][j].life * (grid[(i+1)%N][j].state[k] * COLOR_BIAS[k]) + \
+                                                   grid[(i-1)%N][(j-1)%N].life * (grid[(i-1)%N][(j-1)%N].state[k] * COLOR_BIAS[k]) + \
+                                                   grid[(i-1)%N][(j+1)%N].life * (grid[(i-1)%N][(j+1)%N].state[k] * COLOR_BIAS[k]) + \
+                                                   grid[(i+1)%N][(j-1)%N].life * (grid[(i+1)%N][(j-1)%N].state[k] * COLOR_BIAS[k]) + \
+                                                   grid[(i+1)%N][(j+1)%N].life * (grid[(i+1)%N][(j+1)%N].state[k] * COLOR_BIAS[k])) / 3
 
     # update data
     img.set_data(newGrid)
