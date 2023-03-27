@@ -22,6 +22,11 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+COLOR_BIAS = [0, 0.4, 0.1]
+
+def generateWorld(N):
+    return [[cell(cell.rndLife(), cell.rndColorState()) for i in range(N)] for k in range(N)]
+
 def getGrid(grid, N):
     newGrid = np.zeros(shape=(N,N,3))
     for i in range(len(grid)):
@@ -29,17 +34,6 @@ def getGrid(grid, N):
             for k in range(0,2):
                 newGrid[i,j,k] = grid[i][j].state[k]
     return newGrid
-
-# Randomize who is alive and bias towards dead
-def rndLife():
-    return np.random.choice(LIFE_STATES, p=[0.2, 0.8])
-
-# Randomize the color state of each cell R, G, or B
-def rndColorState():
-    return random.sample(COLOR_STATE, len(COLOR_STATE))
-
-def generateWorld(N):
-    return [[cell(rndLife(), rndColorState()) for i in range(N)] for k in range(N)]
 
 def update(frameNum, img, imgGrid, N, grid):
 
@@ -67,10 +61,14 @@ def update(frameNum, img, imgGrid, N, grid):
                     for k in range(0, 3):
                         newGrid[i,j,k]      = grid[i][j].state[k]
                         grid[i][j].life     = ALIVE
-#                        grid[i][j].state[k] = grid[i][(j-1)%N].life * grid[i][j].state[k] * colorBias[k] + grid[i][(j+1)%N].life +               \
-#                                              grid[(i-1)%N][j].life + grid[(i+1)%N][j].life +               \
-#                                              grid[(i-1)%N][(j-1)%N].life + grid[(i-1)%N][(j+1)%N].life +   \
-#                                              grid[(i+1)%N][(j-1)%N].life + grid[(i+1)%N][(j+1)%N].life
+                        grid[i][j].state[k] = (grid[i][(j-1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
+                                               grid[i][(j+1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
+                                               grid[(i-1)%N][j].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
+                                               grid[(i+1)%N][j].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
+                                               grid[(i-1)%N][(j-1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
+                                               grid[(i-1)%N][(j+1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
+                                               grid[(i+1)%N][(j-1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k] + \
+                                               grid[(i+1)%N][(j+1)%N].life * grid[i][j].state[k] * COLOR_BIAS[k]) / 3
 
     # update data
     img.set_data(newGrid)

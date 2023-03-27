@@ -48,5 +48,5 @@ class cell:
     def rndColorState():
         return random.sample(COLOR_STATE, len(COLOR_STATE))
 
-    def generateWorld(N):
+    def generateWorld(self, N):
         return [[self(self.rndLife(), self.rndColorState()) for i in range(N)] for k in range(N)]
