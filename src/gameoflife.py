@@ -15,7 +15,6 @@ Referenced basic Game of Life Code -
 
 # Python code to implement Conway's Game Of Life
 from cell import *
-import time
 import argparse
 import numpy as np
 import matplotlib
@@ -28,15 +27,21 @@ def generateWorld(N):
     return [[cell(cell.rndLife(), cell.rndColorState()) for i in range(N)] for k in range(N)]
 
 def getGrid(grid, N):
+    livecount = 0
     newGrid = np.zeros(shape=(N,N,3))
-    for i in range(len(grid)):
-        for j in range(i):
-            for k in range(0,2):
-                newGrid[i,j,k] = grid[i][j].state[k]
+    for i in range(N):
+        for j in range(N):
+            for k in range(3):
+                if grid[i][j].life == ALIVE:
+                    newGrid[i,j,k] = grid[i][j].state[k]
+    
+    if k == 0:
+        livecount += 1
+    print ((livecount/N)*100)
     return newGrid
 
 def update(frameNum, img, imgGrid, N, grid):
-
+    plt.pause(1)
     # Copy grid to generate the image to print vs. the data packed cell world
     newGrid = np.zeros(shape=(N,N,3))
 
@@ -57,19 +62,21 @@ def update(frameNum, img, imgGrid, N, grid):
                     newGrid[i, j, :3] = DEAD
                     grid[i][j].life   = DEAD
             else:
-                if total == 3:
-                    for k in range(0, 3):
+                if (total == 3) or (total == 2):
+                    for k in range(3):
                         newGrid[i,j,k]      = grid[i][j].state[k]
                         grid[i][j].life     = ALIVE
+                        '''
                         if grid[i][j].state[k] != 255:
                             grid[i][j].state[k] = (grid[i][(j-1)%N].life * (grid[i][(j-1)%N].state[k] * COLOR_BIAS[k]) + \
-                                                   grid[i][(j+1)%N].life * (grid[i][(j+1)%N].state[k] * COLOR_BIAS[k]) + \
-                                                   grid[(i-1)%N][j].life * (grid[(i-1)%N][j].state[k] * COLOR_BIAS[k]) + \
-                                                   grid[(i+1)%N][j].life * (grid[(i+1)%N][j].state[k] * COLOR_BIAS[k]) + \
-                                                   grid[(i-1)%N][(j-1)%N].life * (grid[(i-1)%N][(j-1)%N].state[k] * COLOR_BIAS[k]) + \
-                                                   grid[(i-1)%N][(j+1)%N].life * (grid[(i-1)%N][(j+1)%N].state[k] * COLOR_BIAS[k]) + \
-                                                   grid[(i+1)%N][(j-1)%N].life * (grid[(i+1)%N][(j-1)%N].state[k] * COLOR_BIAS[k]) + \
-                                                   grid[(i+1)%N][(j+1)%N].life * (grid[(i+1)%N][(j+1)%N].state[k] * COLOR_BIAS[k])) / 3
+                                                grid[i][(j+1)%N].life * (grid[i][(j+1)%N].state[k] * COLOR_BIAS[k]) + \
+                                                grid[(i-1)%N][j].life * (grid[(i-1)%N][j].state[k] * COLOR_BIAS[k]) + \
+                                                grid[(i+1)%N][j].life * (grid[(i+1)%N][j].state[k] * COLOR_BIAS[k]) + \
+                                                grid[(i-1)%N][(j-1)%N].life * (grid[i][j].state[k] * COLOR_BIAS[k]) + \
+                                                grid[(i-1)%N][(j+1)%N].life * (grid[i][j].state[k] * COLOR_BIAS[k]) + \
+                                                grid[(i+1)%N][(j-1)%N].life * (grid[i][j].state[k] * COLOR_BIAS[k]) + \
+                                                grid[(i+1)%N][(j+1)%N].life * (grid[i][j].state[k] * COLOR_BIAS[k])) / 3
+                        '''
 
     # update data
     img.set_data(newGrid)
@@ -91,17 +98,17 @@ def main():
     args = parser.parse_args()
     
     # set iteration count
-    frames = 1000
+    frames = 100
     if args.frames and int(args.frames) > 100:
         frames = int(args.frames)
     
     # set grid size
-    N = 1000
+    N = 100
     if args.N and int(args.N) > 8:
         N = int(args.N)
         
     # set animation update interval
-    updateInterval = 500
+    updateInterval = 50
     if args.interval:
         updateInterval = int(args.interval)
 
@@ -110,18 +117,19 @@ def main():
     # populate grid with random on/off - more off than on
     grid = generateWorld(N)
     imgGrid = getGrid(grid,N)
-    print(imgGrid.shape)
+    #print('\n'.join(['\t'.join([str(cl) for cl in row]) for row in grid]))
+    #print('\n'.join(['\t'.join([str(cll) for cll in row1]) for row1 in imgGrid]))
 
     # set up animation
     matplotlib.use('TkAgg')
     fig, ax = plt.subplots()
     img = ax.imshow(imgGrid, interpolation='nearest')
+
     ani = animation.FuncAnimation(fig,
                                   update, 
                                   fargs=(img, imgGrid, N, grid,),
-                                  #frames=frames,
+                                  frames=frames,
                                   interval=updateInterval,
-                                  save_count=100,
                                   blit = True,
                                   repeat=True)
 
