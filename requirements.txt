@@ -8,5 +8,5 @@
 # Member - Zackary Clark-Williams
 ###
 
-numpy
-matplotlib
+numpy >= 1.20
+matplotlib >= 3.7.0
