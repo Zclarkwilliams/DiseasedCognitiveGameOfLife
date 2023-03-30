@@ -40,11 +40,10 @@ def getGrid(grid, N):
     print ((livecount/N)*100)
     return newGrid
 
-def update(frameNum, img, imgGrid, N, grid):
+def update(frameNum, img, N, grid):
     #plt.pause(1)
     # Copy grid to generate the image to print vs. the data packed cell world
-    newGrid = np.zeros(shape=(N,N,3))
-
+    newImg = np.zeros(shape=(N,N,3))
     # For calculation and we go line by line
     for i in range(N):
         for j in range(N):
@@ -59,14 +58,12 @@ def update(frameNum, img, imgGrid, N, grid):
             # apply Conway's rules
             if grid[i][j].life == ALIVE:
                 if total in {2, 3}:
-                    newGrid[i,j,:3]     = grid[i][j].state
+                    newImg[i,j,:3]     = grid[i][j].state
                 else:
-                    newGrid[i, j, :3]   = DEAD
-                #    grid[i][j].life     = DEAD
+                    newImg[i, j, :3]   = DEAD
             else:
                 if total == 3:
-                    newGrid[i,j,:3]     = grid[i][j].state
-                #    grid[i][j].life     = ALIVE
+                    newImg[i,j,:3]     = grid[i][j].state
                 '''
                         if grid[i][j].state[k] != 255:
                             grid[i][j].state[k] = (grid[i][(j-1)%N].life * (grid[i][(j-1)%N].state[k] * COLOR_BIAS[k]) + \
@@ -78,10 +75,16 @@ def update(frameNum, img, imgGrid, N, grid):
                                                 grid[(i+1)%N][(j-1)%N].life * (grid[i][j].state[k] * COLOR_BIAS[k]) + \
                                                 grid[(i+1)%N][(j+1)%N].life * (grid[i][j].state[k] * COLOR_BIAS[k])) / 3
                         '''
-    # update data
-    img.set_data(newGrid)
+    for i in range(N):
+        for j in range(N):
+            if int(newImg[i, j].sum(0)) == 0:
+                grid[i][j].life = DEAD
+            else:
+                grid[i][j].life = ALIVE
+	
+	# update data
+    img.set_data(newImg)
     #img.set_data(np.clip(newGrid, 0, 1))
-    imgGrid[:] = newGrid[:]
     return (img,)
 
 def main():
@@ -127,7 +130,7 @@ def main():
 
     ani = animation.FuncAnimation(fig,
                                   update, 
-                                  fargs=(img, imgGrid, N, grid,),
+                                  fargs=(img, N, grid,),
                                   frames=frames,
                                   interval=updateInterval,
                                   blit = True,
