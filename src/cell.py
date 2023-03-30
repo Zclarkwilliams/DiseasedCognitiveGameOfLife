@@ -21,8 +21,10 @@ COLOR_STATE = [255, 0, 0]       # color order as [R, G, B] values 0 - 255
 # Automata structure
 @dataclass
 class cell:
-    _life:  int
-    _state: list(COLOR_STATE)
+    _life:          int
+    _lifespan:      int
+    _avgLifespan:   int
+    _state:         list(COLOR_STATE)
 
     @property
     def life (self) -> int:
@@ -31,7 +33,23 @@ class cell:
     @life.setter
     def life (self, life:int) -> None:
         self._life = life
-        
+
+    @property
+    def lifespan (self) -> int:
+        return self._lifespan
+    
+    @lifespan.setter
+    def lifespan (self, lifespan:int) -> None:
+        self._lifespan = lifespan
+
+    @property
+    def avgLifespan (self) -> int:
+        return self._avgLifespan
+    
+    @avgLifespan.setter
+    def avgLifespan (self, avgLifespan:int) -> None:
+        self._avgLifespan = avgLifespan
+
     @property
     def state (self) -> list:
         return self._state
