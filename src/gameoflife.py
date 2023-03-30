@@ -41,10 +41,8 @@ def getGrid(grid, N):
             for k in range(3):
                 if grid[i][j].life == ALIVE:
                     newGrid[i,j,k] = grid[i][j].state[k]
-    
     if k == 0:
         livecount += 1
-    print ((livecount/N)*100)
     return newGrid
 
 def update(frameNum, img, N, grid):
@@ -113,7 +111,7 @@ def main():
     
     # set iteration count
     frames = 1000
-    if args.frames and int(args.frames) > 100:
+    if args.frames and int(args.frames) >= 100:
         frames = int(args.frames)
     
     # set grid size
