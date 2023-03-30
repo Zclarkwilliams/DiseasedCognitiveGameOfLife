@@ -21,7 +21,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-COLOR_BIAS = [0, 0.4, 0.1]
+COLOR_BIAS = [0.5, 0.2, 0.0] # R, G, B biases against each change in next generation effect
 
 def generateWorld(N):
     return [[cell(cell.rndLife(), cell.rndColorState()) for i in range(N)] for k in range(N)]
@@ -34,16 +34,15 @@ def getGrid(grid, N):
             for k in range(3):
                 if grid[i][j].life == ALIVE:
                     newGrid[i,j,k] = grid[i][j].state[k]
-    
     if k == 0:
         livecount += 1
-    print ((livecount/N)*100)
     return newGrid
 
 def update(frameNum, img, N, grid):
     #plt.pause(1)
     # Copy grid to generate the image to print vs. the data packed cell world
     newImg = np.zeros(shape=(N,N,3))
+    
     # For calculation and we go line by line
     for i in range(N):
         for j in range(N):
@@ -63,18 +62,28 @@ def update(frameNum, img, N, grid):
                     newImg[i, j, :3]   = DEAD
             else:
                 if total == 3:
-                    newImg[i,j,:3]     = grid[i][j].state
-                '''
+                    # First udate the color of the cell that will be brought to life
+                    # Initialize color biasing
+                    bias = COLOR_BIAS
+                    for k in range (3):
+                        # Rotate bias array to match born color to 0 and the other two to their bias setting
+                        bias = [bias[-1]] + bias[0:-1]
+                        
+                        # Loop though neighborhood and average the color change by those that are bringing us to life
                         if grid[i][j].state[k] != 255:
-                            grid[i][j].state[k] = (grid[i][(j-1)%N].life * (grid[i][(j-1)%N].state[k] * COLOR_BIAS[k]) + \
-                                                grid[i][(j+1)%N].life * (grid[i][(j+1)%N].state[k] * COLOR_BIAS[k]) + \
-                                                grid[(i-1)%N][j].life * (grid[(i-1)%N][j].state[k] * COLOR_BIAS[k]) + \
-                                                grid[(i+1)%N][j].life * (grid[(i+1)%N][j].state[k] * COLOR_BIAS[k]) + \
-                                                grid[(i-1)%N][(j-1)%N].life * (grid[i][j].state[k] * COLOR_BIAS[k]) + \
-                                                grid[(i-1)%N][(j+1)%N].life * (grid[i][j].state[k] * COLOR_BIAS[k]) + \
-                                                grid[(i+1)%N][(j-1)%N].life * (grid[i][j].state[k] * COLOR_BIAS[k]) + \
-                                                grid[(i+1)%N][(j+1)%N].life * (grid[i][j].state[k] * COLOR_BIAS[k])) / 3
-                        '''
+                            grid[i][j].state[k] =  round ((grid[i][(j-1)%N].life * sum([grid[i][(j-1)%N].state[l] * bias[l] for l in range(3)]) + \
+                                                           grid[i][(j+1)%N].life * sum([grid[i][(j+1)%N].state[l] * bias[l] for l in range(3)]) + \
+                                                           grid[(i-1)%N][j].life * sum([grid[(i-1)%N][j].state[l] * bias[l] for l in range(3)]) + \
+                                                           grid[(i+1)%N][j].life * sum([grid[(i+1)%N][j].state[l] * bias[l] for l in range(3)]) + \
+                                                           grid[(i-1)%N][(j-1)%N].life * sum([grid[i][j].state[l] * bias[l] for l in range(3)]) + \
+                                                           grid[(i-1)%N][(j+1)%N].life * sum([grid[i][j].state[l] * bias[l] for l in range(3)]) + \
+                                                           grid[(i+1)%N][(j-1)%N].life * sum([grid[i][j].state[l] * bias[l] for l in range(3)]) + \
+                                                           grid[(i+1)%N][(j+1)%N].life * sum([grid[i][j].state[l] * bias[l] for l in range(3)])) / 3)
+                    
+                    # Set the new image cell RGB color to the updated coloring
+                    newImg[i,j,:3] = grid[i][j].state
+
+    # Update the cell world data to match the new life and death setting
     for i in range(N):
         for j in range(N):
             if int(newImg[i, j].sum(0)) == 0:
@@ -82,9 +91,12 @@ def update(frameNum, img, N, grid):
             else:
                 grid[i][j].life = ALIVE
 	
-	# update data
+	# Clip image data to fit matlab plot values of 0..255
+    for k in range (3):
+        newImg[:N, :N, k] = newImg[:N, :N, k] / np.max(newImg[:N, :N, k])
+    
+    # Set the new world grid to image data
     img.set_data(newImg)
-    #img.set_data(np.clip(newGrid, 0, 1))
     return (img,)
 
 def main():
