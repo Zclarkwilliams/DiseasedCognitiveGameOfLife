@@ -141,17 +141,15 @@ def main():
 
     # declare grid
     grid = np.array([])
+
     # populate grid with random on/off - more off than on
     grid = generateWorld(N)
     imgGrid = getGrid(grid,N)
-    #print('\n'.join(['\t'.join([str(cl) for cl in row]) for row in grid]))
-    #print('\n'.join(['\t'.join([str(cll) for cll in row1]) for row1 in imgGrid]))
 
     # set up animation
     matplotlib.use('TkAgg')
     fig, ax = plt.subplots()
     img = ax.imshow(imgGrid, interpolation='nearest')
-
     ani = animation.FuncAnimation(fig,
                                   update, 
                                   fargs     = (img, N, grid, frames,),
