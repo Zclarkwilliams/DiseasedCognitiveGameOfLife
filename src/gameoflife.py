@@ -24,7 +24,14 @@ import matplotlib.animation as animation
 COLOR_BIAS = [0, 0.4, 0.1]
 
 def generateWorld(N):
-    return [[cell(cell.rndLife(), cell.rndColorState()) for i in range(N)] for k in range(N)]
+    ##
+    # Randomize cell initialize structure:
+    #  Cell [ [Alive or Dead],
+    #         [Iterations Been Alive],
+    #         [Average Lifespan],
+    #         [R_Color_State, G_Color_State, B_Color_State] ]
+    ## 
+    return [[cell(cell.rndLife(), 0, 0, cell.rndColorState()) for i in range(N)] for k in range(N)]
 
 def getGrid(grid, N):
     livecount = 0
@@ -78,9 +85,13 @@ def update(frameNum, img, N, grid):
     for i in range(N):
         for j in range(N):
             if int(newImg[i, j].sum(0)) == 0:
-                grid[i][j].life = DEAD
+                grid[i][j].life     = DEAD
+                # Update average lifespan
+                grid[i][j].avgLifespan = round ((grid[i][j].avgLifespan + grid[i][j].lifespan) / 2)
             else:
-                grid[i][j].life = ALIVE
+                grid[i][j].life     = ALIVE
+                # Accumulate lifespan tracker
+                grid[i][j].lifespan += 1
 	
 	# update data
     img.set_data(newImg)
@@ -101,7 +112,7 @@ def main():
     args = parser.parse_args()
     
     # set iteration count
-    frames = 100
+    frames = 1000
     if args.frames and int(args.frames) > 100:
         frames = int(args.frames)
     
@@ -130,18 +141,19 @@ def main():
 
     ani = animation.FuncAnimation(fig,
                                   update, 
-                                  fargs=(img, N, grid,),
-                                  frames=frames,
-                                  interval=updateInterval,
-                                  blit = True,
-                                  repeat=True)
+                                  fargs     = (img, N, grid,),
+                                  frames    = frames,
+                                  interval  = updateInterval,
+                                  blit      = True,
+                                  repeat    = False)
 
     # # of frames?
     # set output file
     if args.movfile:
         ani.save(args.movfile, fps=30, extra_args=['-vcodec', 'libx264'])
-
     plt.show(block=True)
+
+    conclusion.getAverageLifeSpan (grid)
 
 # call main
 if __name__ == '__main__':

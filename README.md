@@ -2,7 +2,7 @@
 ## Spring 2023 Term Project<br />
 ### CS 6795 Intro to Cognitive Science<br />
 
-**Team** - Sloppopotamus<br />
+**Team**   - Swole<br />
 **Member** - Scott Pickthorn<br />
 **Member** - Zachary Clark-Williams<br />
 
