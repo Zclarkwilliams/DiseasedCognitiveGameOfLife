@@ -15,6 +15,7 @@ Referenced basic Game of Life Code -
 
 # Python code to implement Conway's Game Of Life
 from cell import *
+from conclusion import *
 import argparse
 import numpy as np
 import matplotlib
@@ -151,7 +152,7 @@ def main():
         ani.save(args.movfile, fps=30, extra_args=['-vcodec', 'libx264'])
     plt.show(block=True)
 
-    conclusion.getAverageLifeSpan (grid)
+    conclusion.getAverageLifeSpan (grid, N)
 
 # call main
 if __name__ == '__main__':
