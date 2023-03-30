@@ -19,12 +19,14 @@ Information Currently Tracking:
 
 class conclusion:
     
-    def getAverageLifeSpan (grid):
-        colavg = 0
+    def getAverageLifeSpan (grid, N):
+        avg = 0
+        iWasAlive = 0
         for i in range(N):
             rowavg = 0
             for j in range(N):
                 rowavg += grid[i][j].avgLifespan
-            colavg += (rowavg / N)
-        colavg = round (colavg / N)
-        print(colavg)
+                if grid[i][j].avgLifespan > 0: iWasAlive +=1
+            avg += (rowavg / iWasAlive)
+        avg = round (avg / N)
+        print(avg)
