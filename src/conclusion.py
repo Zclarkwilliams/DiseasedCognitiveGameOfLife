@@ -16,8 +16,17 @@ Information Currently Tracking:
     ...
 
 '''
+import numpy as np
 
 class conclusion:
+    
+    def getMaxLifespan (grid, N):
+        max_val = -np.inf
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                max_val = max(max_val, np.max(grid[i][j].avgLifespan))
+        print(max_val)
+        return max_val
     
     def getAverageLifeSpan (grid, N):
         avg = 0
@@ -30,3 +39,4 @@ class conclusion:
             avg += (rowavg / iWasAlive)
         avg = round (avg / N)
         print(avg)
+        return avg

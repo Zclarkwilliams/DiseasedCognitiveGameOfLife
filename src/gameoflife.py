@@ -46,7 +46,7 @@ def getGrid(grid, N):
         livecount += 1
     return newGrid
 
-def update(frameNum, img, N, grid):
+def update(frameNum, img, N, grid, totalFrames):
     #plt.pause(1)
     # Copy grid to generate the image to print vs. the data packed cell world
     newImg = np.zeros(shape=(N,N,3))
@@ -94,7 +94,7 @@ def update(frameNum, img, N, grid):
 	
 	# update data
     img.set_data(newImg)
-    #img.set_data(np.clip(newGrid, 0, 1))
+
     return (img,)
 
 def main():
@@ -140,7 +140,7 @@ def main():
 
     ani = animation.FuncAnimation(fig,
                                   update, 
-                                  fargs     = (img, N, grid,),
+                                  fargs     = (img, N, grid, frames,),
                                   frames    = frames,
                                   interval  = updateInterval,
                                   blit      = True,
@@ -153,6 +153,7 @@ def main():
     plt.show(block=True)
 
     conclusion.getAverageLifeSpan (grid, N)
+    conclusion.getMaxLifespan (grid, N)
 
 # call main
 if __name__ == '__main__':
