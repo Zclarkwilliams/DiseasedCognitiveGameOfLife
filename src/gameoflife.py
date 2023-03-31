@@ -16,6 +16,7 @@ Referenced basic Game of Life Code -
 # Python code to implement Conway's Game Of Life
 from cell import *
 from conclusion import *
+import decisionService
 import argparse
 import numpy as np
 import matplotlib
@@ -46,7 +47,7 @@ def getGrid(grid, N):
         livecount += 1
     return newGrid
 
-def update(frameNum, img, N, grid, ):
+def update(frameNum, img, N, grid, additionNum):
     #plt.pause(1)
     # Copy grid to generate the image to print vs. the data packed cell world
     newImg = np.zeros(shape=(N,N,3))
@@ -64,6 +65,14 @@ def update(frameNum, img, N, grid, ):
 
             # apply Conway's rules
             if grid[i][j].life == ALIVE:
+                if(additionNum == 1 and random.uniform(0,1) > decisionService.EXP1_PROB):
+                    updatedCell, activate = decisionService.decide()
+                    if(activate == 1):
+                        newI = (i + updatedCell[0]) % N
+                        newJ = (j + updatedCell[1]) % N
+                        # print(newI, newJ, activate)
+                        newImg[newI, newJ, :3] = grid[newI][newJ].state
+                        continue
                 if total in {2, 3}:
                     newImg[i,j,:3]     = grid[i][j].state
                 else:
@@ -122,6 +131,7 @@ def main():
     parser.add_argument('--mov-file', dest='movfile', required=False)
     parser.add_argument('--interval', dest='interval', required=False)
     parser.add_argument('--frames', dest='frames', required=False)
+    parser.add_argument('--addition', dest='addition', required=False, default=0)
     args = parser.parse_args()
     
     # set iteration count
@@ -133,7 +143,6 @@ def main():
     N = 100
     if args.N and int(args.N) > 8:
         N = int(args.N)
-        
     # set animation update interval
     updateInterval = 50
     if args.interval:
@@ -152,7 +161,7 @@ def main():
     img = ax.imshow(imgGrid, interpolation='nearest')
     ani = animation.FuncAnimation(fig,
                                   update, 
-                                  fargs     = (img, N, grid, ),
+                                  fargs     = (img, N, grid, int(args.addition), ),
                                   frames    = frames,
                                   interval  = updateInterval,
                                   blit      = True,
