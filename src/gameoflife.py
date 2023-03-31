@@ -46,7 +46,7 @@ def getGrid(grid, N):
         livecount += 1
     return newGrid
 
-def update(frameNum, img, N, grid, totalFrames):
+def update(frameNum, img, N, grid, ):
     #plt.pause(1)
     # Copy grid to generate the image to print vs. the data packed cell world
     newImg = np.zeros(shape=(N,N,3))
