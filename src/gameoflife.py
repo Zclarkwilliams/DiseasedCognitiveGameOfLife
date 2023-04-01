@@ -152,7 +152,7 @@ def main():
     img = ax.imshow(imgGrid, interpolation='nearest')
     ani = animation.FuncAnimation(fig,
                                   update, 
-                                  fargs     = (img, N, grid, frames,),
+                                  fargs     = (img, N, grid, ),
                                   frames    = frames,
                                   interval  = updateInterval,
                                   blit      = True,
