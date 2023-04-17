@@ -65,8 +65,9 @@ def update(frameNum, img, N, grid, additionNum):
 
             # apply Conway's rules
             if grid[i][j].life == ALIVE:
-                if(additionNum == 1 and random.uniform(0,1) > decisionService.EXP1_PROB):
-                    updatedCell, activate = decisionService.decide()
+                if(additionNum > 0 and random.uniform(0,1) > decisionService.EXP1_PROB):
+                    if(additionNum == 1):
+                        updatedCell, activate = decisionService.decideV2([i,j], grid)
                     if(activate == 1):
                         newI = (i + updatedCell[0]) % N
                         newJ = (j + updatedCell[1]) % N
